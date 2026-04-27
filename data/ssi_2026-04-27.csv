@@ -1,0 +1,16 @@
+﻿data_referencia;hora_referencia;secao;campo;valor_original;unidade;valor_numerico;escala;observacao;fonte
+2026-04-27;13:06;Resumo SSI;Social Selling Index atual;53;pontos;53;0-100;Pontuação principal exibida como 53 de 100.;Imagem LinkedIn SSI
+2026-04-27;13:06;Classificação;Classificação SSI do setor;Primeiros 10%;%;10;percentual/ranking;Indica que o perfil está entre os primeiros 10% do setor.;Imagem LinkedIn SSI
+2026-04-27;13:06;Classificação;Classificação SSI da rede;Primeiros 12%;%;12;percentual/ranking;Indica que o perfil está entre os primeiros 12% da rede.;Imagem LinkedIn SSI
+2026-04-27;13:06;Componentes da pontuação;Estabelecer sua marca profissional;20,973;pontos;20.973;0-25;Primeiro componente da pontuação SSI.;Imagem LinkedIn SSI
+2026-04-27;13:06;Componentes da pontuação;Localizar as pessoas certas;6,38;pontos;6.38;0-25;Segundo componente da pontuação SSI.;Imagem LinkedIn SSI
+2026-04-27;13:06;Componentes da pontuação;Interagir oferecendo insights;10,25;pontos;10.25;0-25;Terceiro componente da pontuação SSI.;Imagem LinkedIn SSI
+2026-04-27;13:06;Componentes da pontuação;Criar relacionamentos;15;pontos;15;0-25;Quarto componente da pontuação SSI.;Imagem LinkedIn SSI
+2026-04-27;13:06;Benchmark do setor;Setor de referência;Atividades de consultoria em gestão empresarial;;;;Setor usado pelo LinkedIn para comparação do SSI.;Imagem LinkedIn SSI
+2026-04-27;13:06;Benchmark do setor;SSI médio do setor;35;pontos;35;0-100;Média dos profissionais de vendas do setor informado.;Imagem LinkedIn SSI
+2026-04-27;13:06;Benchmark do setor;Posição no setor;Primeiros 10%;%;10;percentual/ranking;Reforço da posição relativa no setor.;Imagem LinkedIn SSI
+2026-04-27;13:06;Benchmark do setor;Variação semanal no setor;Sem alterações na última semana;;;;Status exibido no bloco Pessoas no seu setor.;Imagem LinkedIn SSI
+2026-04-27;13:06;Benchmark da rede;SSI médio da rede;36;pontos;36;0-100;Média das pessoas da rede do perfil.;Imagem LinkedIn SSI
+2026-04-27;13:06;Benchmark da rede;Posição na rede;Primeiros 12%;%;12;percentual/ranking;Reforço da posição relativa na rede.;Imagem LinkedIn SSI
+2026-04-27;13:06;Benchmark da rede;Variação semanal na rede;Sem alterações na última semana;;;;Status exibido no bloco Pessoas na sua rede.;Imagem LinkedIn SSI
+2026-04-27;13:06;Mensagem complementar;Chamada Sales Navigator;Encontre os decisores certos e encurte seu ciclo de vendas com o LinkedIn Sales Navigator.;;;;Texto promocional exibido no rodapé da tela.;Imagem LinkedIn SSI
