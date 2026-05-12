@@ -1,0 +1,631 @@
+#!/usr/bin/env python3
+"""
+LinkedIn SSI Dashboard Generator
+Usage: python generate_dashboard.py
+       Reads data/*.csv  →  writes dashboard.html
+"""
+
+import csv
+import json
+from datetime import date
+from pathlib import Path
+
+# ── Config ────────────────────────────────────────────────────────────────────
+
+DATA_DIR    = Path(__file__).parent / "data"
+OUTPUT_FILE = Path(__file__).parent / "dashboard.html"
+
+COMPONENTS = [
+    "Estabelecer sua marca profissional",
+    "Localizar as pessoas certas",
+    "Interagir oferecendo insights",
+    "Criar relacionamentos",
+]
+COMP_SHORT  = ["Marca Profissional", "Pessoas Certas", "Insights", "Relacionamentos"]
+COMP_COLORS = ["#0077b5", "#00a0dc", "#5cb85c", "#f0ad4e"]
+
+# ── CSV Parsing ───────────────────────────────────────────────────────────────
+
+def _float(s):
+    try:
+        return float((s or "").replace(",", "."))
+    except ValueError:
+        return None
+
+
+_RANK_AVG_FIELDS = (
+    ("classificação ssi do setor", "rank_sector", int),
+    ("classificação ssi da rede",  "rank_net",    int),
+    ("ssi médio do setor",         "avg_sector",  float),
+    ("ssi médio da rede",          "avg_net",     float),
+)
+
+
+def _route_component(snap, campo, secao, val):
+    """Write a component score into the correct sub-dict based on section context."""
+    sl = secao.lower()
+    if "setor" in sl and "pessoas" in sl:
+        snap["sector_comp"][campo] = val
+    elif "rede" in sl and "pessoas" in sl:
+        snap["net_comp"][campo] = val
+    elif snap["comp"][campo] is None:
+        snap["comp"][campo] = val
+
+
+def _apply_rank_avg(snap, campo, val):
+    """Populate ranking/average fields from a campo label using the lookup table."""
+    cl = campo.lower()
+    for needle, key, cast in _RANK_AVG_FIELDS:
+        if needle in cl and snap[key] is None:
+            snap[key] = cast(val)
+
+
+def parse_csv(path):
+    """Parse one LinkedIn SSI CSV and return a flat snapshot dict."""
+    snap = {
+        "date": None, "ssi": None,
+        "comp":        dict.fromkeys(COMPONENTS),
+        "sector_comp": dict.fromkeys(COMPONENTS),
+        "net_comp":    dict.fromkeys(COMPONENTS),
+        "rank_sector": None, "rank_net": None,
+        "avg_sector":  None, "avg_net":  None,
+    }
+    with open(path, encoding="utf-8-sig") as f:
+        for row in csv.DictReader(f, delimiter=";"):
+            campo = (row.get("campo") or "").strip()
+            secao = (row.get("secao") or "").strip()
+            val   = _float((row.get("valor_numerico") or "").strip())
+            date_ = (row.get("data_referencia") or "").strip()
+
+            if date_ and snap["date"] is None:
+                snap["date"] = date_
+
+            if campo == "Social Selling Index atual" and val and snap["ssi"] is None:
+                snap["ssi"] = val
+            elif campo in COMPONENTS and val is not None:
+                _route_component(snap, campo, secao, val)
+            elif val is not None:
+                _apply_rank_avg(snap, campo, val)
+
+    return snap
+
+
+def load_all(data_dir):
+    """Load and date-sort all valid SSI snapshots from data_dir."""
+    snaps = [parse_csv(f) for f in data_dir.glob("*.csv")]
+    snaps.sort(key=lambda s: s["date"] or "")
+    return [s for s in snaps if s["date"] and s["ssi"] is not None]
+
+
+def fmt_date(d):
+    """Reformat ISO date string YYYY-MM-DD to DD/MM/YYYY."""
+    try:
+        return date.fromisoformat(d).strftime("%d/%m/%Y")
+    except ValueError:
+        return d
+
+# ── Chart Data Builder ────────────────────────────────────────────────────────
+
+def build_chart_data(snaps):
+    """Build the JSON payload consumed by all Chart.js charts in the HTML template."""
+    last = snaps[-1]
+    last_date = fmt_date(last["date"])
+    return {
+        "updated": last_date,
+        "latest": {
+            "date":        last_date,
+            "ssi":         last["ssi"],
+            "rank_sector": last["rank_sector"],
+            "rank_net":    last["rank_net"],
+            "avg_sector":  last["avg_sector"],
+            "avg_net":     last["avg_net"],
+            "comp":        [last["comp"].get(c)        for c in COMPONENTS],
+            "sector_comp": [last["sector_comp"].get(c) for c in COMPONENTS],
+            "net_comp":    [last["net_comp"].get(c)    for c in COMPONENTS],
+        },
+        "history": {
+            "dates": [fmt_date(s["date"]) for s in snaps],
+            "ssi":   [s["ssi"] for s in snaps],
+            "comp":  [[s["comp"].get(c) for s in snaps] for c in COMPONENTS],
+        },
+        "comp_labels": COMP_SHORT,
+        "comp_colors": COMP_COLORS,
+    }
+
+# ── HTML Template ─────────────────────────────────────────────────────────────
+
+HTML_TEMPLATE = r"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn SSI Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --li-blue:  #0077b5;
+      --li-dark:  #004182;
+      --li-light: #70b5f9;
+      --bg:       #f3f2ef;
+      --card:     #ffffff;
+      --text:     #1a1a1a;
+      --muted:    #666666;
+      --radius:   12px;
+      --shadow:   0 2px 10px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: var(--li-dark);
+      color: white;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .header-meta {
+      font-size: 0.82rem;
+      opacity: 0.75;
+    }
+    .header-meta strong { opacity: 1; }
+
+    /* Container */
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 28px 32px;
+    }
+
+    /* KPI Cards */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--li-blue);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+    .kpi-value   { font-size: 1.9rem; font-weight: 800; color: var(--li-blue); line-height: 1.1; }
+    .kpi-label   { font-size: 0.74rem; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .kpi-sub     { font-size: 0.75rem; color: #888; margin-top: 4px; }
+    .kpi-badge   {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #e8f4ea;
+      color: #057642;
+    }
+
+    /* Chart grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .chart-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .chart-card.wide {
+      grid-column: 1 / -1;
+    }
+    .chart-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chart-title-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--li-blue);
+      flex-shrink: 0;
+    }
+
+    /* Gauge */
+    .gauge-wrap {
+      position: relative;
+      max-width: 320px;
+      margin: 8px auto 0;
+    }
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 8px;
+      font-size: 0.75rem;
+      color: #bbb;
+      margin-top: -16px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.78rem;
+      color: #bbb;
+    }
+
+    @media (max-width: 960px) {
+      .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .charts-grid { grid-template-columns: 1fr; }
+      .container { padding: 16px; }
+      .header { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-title">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+      <rect width="30" height="30" rx="5" fill="#0077b5"/>
+      <text x="4" y="23" font-family="Georgia,serif" font-weight="bold" font-size="19" fill="white">in</text>
+    </svg>
+    Social Selling Index &mdash; Dashboard
+  </div>
+  <div class="header-meta">Última atualização: <strong id="updated-date"></strong></div>
+</header>
+
+<div class="container">
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="border-color:#0077b5">
+      <div class="kpi-value" id="kpi-ssi"></div>
+      <div class="kpi-label">SSI Total</div>
+      <div class="kpi-sub" id="kpi-ssi-vs"></div>
+    </div>
+    <div class="kpi-card" style="border-color:#057642">
+      <div class="kpi-value" id="kpi-rank-sector" style="color:#057642"></div>
+      <div class="kpi-label">Ranking no Setor</div>
+      <div class="kpi-badge">melhor = menor %</div>
+    </div>
+    <div class="kpi-card" style="border-color:#5cb85c">
+      <div class="kpi-value" id="kpi-rank-net" style="color:#5cb85c"></div>
+      <div class="kpi-label">Ranking na Rede</div>
+      <div class="kpi-badge">melhor = menor %</div>
+    </div>
+    <div class="kpi-card" style="border-color:#f0ad4e">
+      <div class="kpi-value" id="kpi-avg-sector" style="color:#f0ad4e"></div>
+      <div class="kpi-label">Média do Setor</div>
+      <div class="kpi-sub">de 100 pontos</div>
+    </div>
+    <div class="kpi-card" style="border-color:#00a0dc">
+      <div class="kpi-value" id="kpi-avg-net" style="color:#00a0dc"></div>
+      <div class="kpi-label">Média da Rede</div>
+      <div class="kpi-sub">de 100 pontos</div>
+    </div>
+  </div>
+
+  <!-- Row 1: Gauge + Donut -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title"><span class="chart-title-dot"></span>Score SSI Atual</div>
+      <div class="gauge-wrap">
+        <canvas id="gauge-chart"></canvas>
+        <div class="gauge-labels"><span>0</span><span>50</span><span>100</span></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title"><span class="chart-title-dot" style="background:#5cb85c"></span>Distribuição dos Componentes</div>
+      <canvas id="donut-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 2: Radar + Horizontal Bar -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title"><span class="chart-title-dot" style="background:#f0ad4e"></span>Você vs Setor vs Rede</div>
+      <canvas id="radar-chart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title"><span class="chart-title-dot" style="background:#00a0dc"></span>Comparativo por Componente</div>
+      <canvas id="bar-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 3: Timeline -->
+  <div class="chart-card wide" style="margin-bottom:20px">
+    <div class="chart-title"><span class="chart-title-dot" style="background:#004182"></span>Evolução Temporal</div>
+    <canvas id="timeline-chart"></canvas>
+  </div>
+
+</div>
+
+<div class="footer">Dados exportados do LinkedIn Sales Navigator &bull; Gerado por generate_dashboard.py</div>
+
+<script>
+const DATA = DATA_JSON_PLACEHOLDER;
+
+// ── Populate KPI Cards ─────────────────────────────────────────────────────
+const L = DATA.latest;
+document.getElementById('updated-date').textContent = DATA.updated;
+document.getElementById('kpi-ssi').textContent = L.ssi;
+document.getElementById('kpi-rank-sector').textContent = L.rank_sector ? `Top ${L.rank_sector}%` : '–';
+document.getElementById('kpi-rank-net').textContent    = L.rank_net    ? `Top ${L.rank_net}%`    : '–';
+document.getElementById('kpi-avg-sector').textContent  = L.avg_sector  ? L.avg_sector             : '–';
+document.getElementById('kpi-avg-net').textContent     = L.avg_net     ? L.avg_net                : '–';
+if (L.avg_sector) {
+  const diff = (L.ssi - L.avg_sector).toFixed(1);
+  document.getElementById('kpi-ssi-vs').textContent = `${diff >= 0 ? '+' : ''}${diff} vs setor`;
+}
+
+// ── Custom Plugin: Center Text ─────────────────────────────────────────────
+const centerTextPlugin = {
+  id: 'centerText',
+  afterDraw(chart) {
+    const opts = chart.config.options.plugins && chart.config.options.plugins.centerText;
+    if (!opts) return;
+    const { ctx } = chart;
+    const meta = chart.getDatasetMeta(0);
+    if (!meta || !meta.data.length) return;
+    const cx = meta.data[0].x;
+    const cy = meta.data[0].y;
+    ctx.save();
+    ctx.font = `bold ${opts.fontSize || 44}px -apple-system, sans-serif`;
+    ctx.fillStyle = opts.color || '#0077b5';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(opts.text, cx, cy - 4);
+    if (opts.subtext) {
+      ctx.font = `13px -apple-system, sans-serif`;
+      ctx.fillStyle = '#aaa';
+      ctx.fillText(opts.subtext, cx, cy + 24);
+    }
+    ctx.restore();
+  }
+};
+Chart.register(centerTextPlugin);
+
+// ── 1. Gauge ───────────────────────────────────────────────────────────────
+const score = L.ssi;
+const gaugeColor = score >= 70 ? '#057642' : score >= 40 ? '#0077b5' : '#cc1016';
+new Chart(document.getElementById('gauge-chart'), {
+  type: 'doughnut',
+  data: {
+    datasets: [{
+      data: [score, 100 - score],
+      backgroundColor: [gaugeColor, '#eee'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    rotation: -90,
+    circumference: 180,
+    cutout: '74%',
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend:   { display: false },
+      tooltip:  { enabled: false },
+      centerText: { text: score, subtext: 'de 100', color: gaugeColor }
+    }
+  }
+});
+
+// ── 2. Donut – Component Distribution ─────────────────────────────────────
+new Chart(document.getElementById('donut-chart'), {
+  type: 'doughnut',
+  data: {
+    labels: DATA.comp_labels,
+    datasets: [{
+      data: L.comp,
+      backgroundColor: DATA.comp_colors,
+      borderWidth: 3,
+      borderColor: '#fff',
+      hoverOffset: 10,
+    }]
+  },
+  options: {
+    cutout: '55%',
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { font: { size: 12 }, padding: 14, usePointStyle: true }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: ${Number(ctx.raw).toFixed(2)} pts (máx 25)`
+        }
+      }
+    }
+  }
+});
+
+// ── 3. Radar ───────────────────────────────────────────────────────────────
+const radarDS = [{
+  label: 'Você',
+  data: L.comp,
+  borderColor: '#0077b5',
+  backgroundColor: 'rgba(0,119,181,0.15)',
+  pointBackgroundColor: '#0077b5',
+  borderWidth: 2, pointRadius: 4,
+}];
+if (L.sector_comp && L.sector_comp.some(v => v !== null)) {
+  radarDS.push({
+    label: 'Média do Setor',
+    data: L.sector_comp,
+    borderColor: '#f0ad4e',
+    backgroundColor: 'rgba(240,173,78,0.12)',
+    pointBackgroundColor: '#f0ad4e',
+    borderWidth: 2, borderDash: [5,4], pointRadius: 4,
+  });
+}
+if (L.net_comp && L.net_comp.some(v => v !== null)) {
+  radarDS.push({
+    label: 'Média da Rede',
+    data: L.net_comp,
+    borderColor: '#5cb85c',
+    backgroundColor: 'rgba(92,184,92,0.1)',
+    pointBackgroundColor: '#5cb85c',
+    borderWidth: 2, borderDash: [3,3], pointRadius: 4,
+  });
+}
+new Chart(document.getElementById('radar-chart'), {
+  type: 'radar',
+  data: { labels: DATA.comp_labels, datasets: radarDS },
+  options: {
+    responsive: true,
+    scales: {
+      r: {
+        min: 0, max: 25,
+        ticks: { stepSize: 5, font: { size: 10 }, color: '#bbb', backdropColor: 'transparent' },
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.1)' },
+        pointLabels: { font: { size: 11 }, color: '#444' }
+      }
+    },
+    plugins: {
+      legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 12 }, padding: 14 } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${Number(ctx.raw).toFixed(2)} pts` } }
+    }
+  }
+});
+
+// ── 4. Grouped Horizontal Bar ──────────────────────────────────────────────
+const barDS = [
+  { label: 'Você', data: L.comp, backgroundColor: '#0077b5', borderRadius: 4 }
+];
+if (L.sector_comp && L.sector_comp.some(v => v !== null))
+  barDS.push({ label: 'Média do Setor', data: L.sector_comp, backgroundColor: '#f0ad4e', borderRadius: 4 });
+if (L.net_comp && L.net_comp.some(v => v !== null))
+  barDS.push({ label: 'Média da Rede', data: L.net_comp, backgroundColor: '#5cb85c', borderRadius: 4 });
+
+new Chart(document.getElementById('bar-chart'), {
+  type: 'bar',
+  data: { labels: DATA.comp_labels, datasets: barDS },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    scales: {
+      x: {
+        min: 0, max: 25,
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        ticks: { callback: v => `${v} pts` }
+      },
+      y: { grid: { display: false } }
+    },
+    plugins: {
+      legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 12 }, padding: 14 } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${Number(ctx.raw).toFixed(2)} pts` } }
+    }
+  }
+});
+
+// ── 5. Timeline ────────────────────────────────────────────────────────────
+const timeDS = [{
+  label: 'SSI Total',
+  data: DATA.history.ssi,
+  borderColor: '#004182',
+  backgroundColor: 'rgba(0,65,130,0.07)',
+  fill: true,
+  tension: 0.35,
+  pointRadius: 7,
+  pointHoverRadius: 9,
+  borderWidth: 3,
+  yAxisID: 'yTotal',
+}];
+DATA.history.comp.forEach((vals, i) => {
+  timeDS.push({
+    label: DATA.comp_labels[i],
+    data: vals,
+    borderColor: DATA.comp_colors[i],
+    backgroundColor: 'transparent',
+    tension: 0.35,
+    pointRadius: 5,
+    pointHoverRadius: 7,
+    borderWidth: 2,
+    yAxisID: 'yComp',
+  });
+});
+new Chart(document.getElementById('timeline-chart'), {
+  type: 'line',
+  data: { labels: DATA.history.dates, datasets: timeDS },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    scales: {
+      yTotal: {
+        min: 0, max: 100, position: 'left',
+        title: { display: true, text: 'SSI Total (0–100)', color: '#004182', font: { weight: 'bold', size: 12 } },
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        ticks: { color: '#004182' }
+      },
+      yComp: {
+        min: 0, max: 25, position: 'right',
+        title: { display: true, text: 'Componentes (0–25)', color: '#888', font: { size: 12 } },
+        grid: { drawOnChartArea: false },
+        ticks: { color: '#888' }
+      },
+      x: { grid: { color: 'rgba(0,0,0,0.05)' } }
+    },
+    plugins: {
+      legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 12 }, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${Number(ctx.raw).toFixed(2)}` } }
+    }
+  }
+});
+</script>
+</body>
+</html>
+"""
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+def main():
+    """Entry point: load all CSVs from DATA_DIR and write dashboard.html."""
+    snaps = load_all(DATA_DIR)
+    if not snaps:
+        raise SystemExit("Nenhum CSV válido encontrado em data/")
+
+    chart_data = build_chart_data(snaps)
+    data_js    = json.dumps(chart_data, ensure_ascii=False, indent=2)
+    html       = HTML_TEMPLATE.replace("DATA_JSON_PLACEHOLDER", data_js)
+
+    OUTPUT_FILE.write_text(html, encoding="utf-8")
+    print(f"Dashboard gerado: {OUTPUT_FILE}")
+    print(f"  > {len(snaps)} snapshot(s): {[s['date'] for s in snaps]}")
+    print(f"  > SSI mais recente: {snaps[-1]['ssi']}/100  ({fmt_date(snaps[-1]['date'])})")
+
+
+if __name__ == "__main__":
+    main()
