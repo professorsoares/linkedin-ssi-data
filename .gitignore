@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# LinkedIn SSI Scraper
+.linkedin_session.json
+.debug/
+dashboard.html
