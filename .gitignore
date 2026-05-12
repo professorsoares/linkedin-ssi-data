@@ -221,3 +221,4 @@ __marimo__/
 .linkedin_session.json
 .debug/
 dashboard.html
+logs/
