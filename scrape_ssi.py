@@ -160,6 +160,21 @@ def extract_from_dom(page) -> dict | None:
         const avgSector = avgMatches[0] ? parseInt(avgMatches[0][1], 10) : null;
         const avgNet    = avgMatches[1] ? parseInt(avgMatches[1][1], 10) : null;
 
+        // Per-component sector/network values — from Highcharts group charts
+        // Charts inside .group-ssi-score__donut-chart: [0]=sector, [1]=network
+        // Each pie has 5 slices: marca, pessoas, insights, relacao, remaining
+        const hcAll = (window.Highcharts && window.Highcharts.charts || []).filter(Boolean);
+        const groupCharts = hcAll.filter(
+            c => c.container && c.container.closest('.group-ssi-score__donut-chart')
+        );
+        const slices = (chart) => {
+            if (!chart) return [null, null, null, null];
+            const pts = chart.series && chart.series[0] && chart.series[0].data || [];
+            return pts.slice(0, 4).map(p => (p && p.y != null) ? p.y : null);
+        };
+        const [sm, sp, si, sr] = slices(groupCharts[0]);
+        const [nm, np, ni, nr] = slices(groupCharts[1]);
+
         return {
             ssi,
             marca:       comp('establish-brand__sub-score-bar'),
@@ -170,6 +185,8 @@ def extract_from_dom(page) -> dict | None:
             rank_net:    rankNet,
             avg_sector:  avgSector,
             avg_net:     avgNet,
+            sector_marca: sm, sector_pessoas: sp, sector_insights: si, sector_relacao: sr,
+            net_marca:    nm, net_pessoas:    np, net_insights:    ni, net_relacao:    nr,
         };
     }
     """)
@@ -229,6 +246,12 @@ def build_rows(metrics: dict, ref_date: str, ref_time: str) -> list[list]:
             v = metrics[key]
             rows.append(row("Benchmark", campo,
                             f"{int(v)} de 100", "pontos", int(v), "0-100"))
+
+    for secao, prefix in [("Pessoas no seu setor", "sector_"), ("Pessoas na sua rede", "net_")]:
+        for comp_key, label in _COMP_LABELS.items():
+            v = metrics.get(f"{prefix}{comp_key}")
+            if v is not None:
+                rows.append(row(secao, label, _br(v), "pontos", round(v, 3), "0-25"))
 
     return rows
 

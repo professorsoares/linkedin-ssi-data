@@ -12,6 +12,7 @@ Uso:
 
 import subprocess
 import sys
+import webbrowser
 from datetime import date
 from pathlib import Path
 
@@ -85,6 +86,8 @@ def main():
     print(f"\n{'─'*50}")
     print("  Concluído.")
     print(f"{'─'*50}\n")
+
+    webbrowser.open((ROOT / "dashboard.html").as_uri())
 
 
 if __name__ == "__main__":
