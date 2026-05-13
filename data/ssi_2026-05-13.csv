@@ -1,0 +1,18 @@
+﻿data_referencia;hora_referencia;secao;campo;valor_original;unidade;valor_numerico;escala;observacao;fonte
+2026-05-13;08:01;Social Selling Index atual;Social Selling Index atual;52 de 100;pontos;52;0-100;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Os quatro componentes da sua pontuação;Estabelecer sua marca profissional;21,048;pontos;21.048;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Os quatro componentes da sua pontuação;Localizar as pessoas certas;6,5;pontos;6.5;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Os quatro componentes da sua pontuação;Interagir oferecendo insights;9,5;pontos;9.5;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Os quatro componentes da sua pontuação;Criar relacionamentos;15;pontos;15.0;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Sua classificação;Classificação SSI do setor;Primeiros 10%;percentual;10;percentual;Ranking percentual no setor;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Sua classificação;Classificação SSI da rede;Primeiros 13%;percentual;13;percentual;Ranking percentual na rede;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Benchmark;SSI médio do setor;35 de 100;pontos;35;0-100;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Benchmark;SSI médio da rede;36 de 100;pontos;36;0-100;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas no seu setor;Estabelecer sua marca profissional;11,79;pontos;11.79;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas no seu setor;Localizar as pessoas certas;5,4;pontos;5.4;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas no seu setor;Interagir oferecendo insights;2,18;pontos;2.18;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas no seu setor;Criar relacionamentos;15,15;pontos;15.15;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas na sua rede;Estabelecer sua marca profissional;13,22;pontos;13.22;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas na sua rede;Localizar as pessoas certas;4,36;pontos;4.36;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas na sua rede;Interagir oferecendo insights;2,43;pontos;2.43;0-25;;LinkedIn SSI / scrape_ssi.py
+2026-05-13;08:01;Pessoas na sua rede;Criar relacionamentos;16,33;pontos;16.33;0-25;;LinkedIn SSI / scrape_ssi.py
