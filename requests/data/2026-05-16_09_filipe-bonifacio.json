@@ -1,0 +1,42 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Coaching de desenvolvimento de carreira",
+  "localizacao": "Belo Horizonte, Minas Gerais",
+  "tempo_publicado": "Há 1 d",
+  "solicitante": {
+    "nome": "Filipe Mendes",
+    "perfil_url": "https://www.linkedin.com/in/filipe-bonifacio",
+    "grau_conexao": "3º",
+    "subtitulo": "Engenheiro de Segurança do Trabalho | Investigação de Acidentes | Saúde e Segurança | NR | PCMSO | Treinamentos | Equipamentos de Proteção",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach de carreira pode ajudar você?",
+      "resposta": "Explorar oportunidades de carreira futuras"
+    },
+    {
+      "pergunta": "Em qual fase de carreira você se encontra?",
+      "resposta": "Recém-formado"
+    },
+    {
+      "pergunta": "Quais são seus objetivos em trabalhar com um coach de carreira? Tem mais alguma coisa que gostaria que essa pessoa soubesse?",
+      "resposta": "meu objetivo e ingressar como engenheiro segurança do trabalho"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Filipe",
+      "valor": "linkedin.com/in/filipe-bonifacio",
+      "url": "https://www.linkedin.com/in/filipe-bonifacio"
+    },
+    {
+      "tipo": "Data de nascimento",
+      "valor": "26 de julho",
+      "url": null
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

@@ -1,0 +1,42 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Coaching executivo",
+  "localizacao": "Caucaia, Ceará",
+  "tempo_publicado": "Há 2 d",
+  "solicitante": {
+    "nome": "ZILMA REBOUÇAS",
+    "perfil_url": "https://www.linkedin.com/in/zilma-rebou%C3%A7as-186379185",
+    "grau_conexao": "3º",
+    "subtitulo": "Técnico em contabilidade",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach pode ajudar você?",
+      "resposta": "Esclarecer objetivos e detalhar como alcançá-los"
+    },
+    {
+      "pergunta": "Para quem é este coach?",
+      "resposta": "Eu"
+    },
+    {
+      "pergunta": "Qual o seu cargo atual e com o que você mais precisa de ajuda? Tem mais alguma coisa que gostaria que essa pessoa soubesse?",
+      "resposta": "SOI TÉCNICO EM CONTABILIDADE, MAS SEMPRE TRABALHEI NA PARTE DE TESOURARIA . NÃO TENHO EXPERIENCIA COM IMPOSTOS , ABRIR CNPJ , NEM COM IRF , ETC...."
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de ZILMA",
+      "valor": "linkedin.com/in/zilma-rebouças-186379185",
+      "url": "https://www.linkedin.com/in/zilma-rebou%C3%A7as-186379185"
+    },
+    {
+      "tipo": "sites",
+      "valor": "pizzaria Doro",
+      "url": "http://pizzaria%20doro/"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

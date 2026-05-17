@@ -1,0 +1,33 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Treinamento",
+  "localizacao": "Santo Antônio do Monte, Minas Gerais",
+  "tempo_publicado": "Há 22 h",
+  "solicitante": {
+    "nome": "Gustavo Santos",
+    "perfil_url": "https://www.linkedin.com/in/gustavo-santos-007570407",
+    "grau_conexao": "3º",
+    "subtitulo": "Psicólogo & RH",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Descreva seu projeto e do que você precisa",
+      "resposta": "Treinamento sobre cultura de inovação"
+    },
+    {
+      "pergunta": "Quando gostaria de ter este projeto pronto?",
+      "resposta": "Nas próximas duas semanas"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Gustavo",
+      "valor": "linkedin.com/in/gustavo-santos-007570407",
+      "url": "https://www.linkedin.com/in/gustavo-santos-007570407"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

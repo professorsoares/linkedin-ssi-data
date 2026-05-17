@@ -12,7 +12,7 @@ from pathlib import Path
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
-DATA_DIR    = Path(__file__).parent / "data"
+DATA_DIR    = Path(__file__).parent / "ssi" / "data"
 OUTPUT_FILE = Path(__file__).parent / "dashboard.html"
 
 COMPONENTS = [

@@ -1,0 +1,45 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Consultoria de gerenciamento",
+  "localizacao": "Mogi das Cruzes, São Paulo",
+  "tempo_publicado": "Há 1 d",
+  "solicitante": {
+    "nome": "Renato Breviglieri",
+    "perfil_url": "https://www.linkedin.com/in/renato-breviglieri-25625373",
+    "grau_conexao": "3º",
+    "subtitulo": "MEDICO PNEUMOLOGISTA da empresa CLINICA MEDICA BREVIGLIERI",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "What type of strategy consulting?",
+      "resposta": "Business planning / strategy, Operations & performance improvement"
+    },
+    {
+      "pergunta": "What field most closely aligns with your business?",
+      "resposta": "Marketing / Advertising"
+    },
+    {
+      "pergunta": "If this is for a business, what is the size of your business?",
+      "resposta": "< 10 employees"
+    },
+    {
+      "pergunta": "What is the scope of this project?",
+      "resposta": "One time need"
+    },
+    {
+      "pergunta": "When do you need these services?",
+      "resposta": "Within the next two weeks"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Renato",
+      "valor": "linkedin.com/in/renato-breviglieri-25625373",
+      "url": "https://www.linkedin.com/in/renato-breviglieri-25625373"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

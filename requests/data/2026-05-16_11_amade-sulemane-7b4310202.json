@@ -1,0 +1,33 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Coaching de desenvolvimento de carreira",
+  "localizacao": "Cidade de Pemba, Cabo Delgado",
+  "tempo_publicado": "Há 2 d",
+  "solicitante": {
+    "nome": "Amade Sulemane",
+    "perfil_url": "https://www.linkedin.com/in/amade-sulemane-7b4310202",
+    "grau_conexao": "3º",
+    "subtitulo": "supervisor de operações em transportes, logística & procurement",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach de carreira pode ajudar você?",
+      "resposta": "Encontrar emprego"
+    },
+    {
+      "pergunta": "Em qual fase de carreira você se encontra?",
+      "resposta": "Outra opção"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Amade",
+      "valor": "linkedin.com/in/amade-sulemane-7b4310202",
+      "url": "https://www.linkedin.com/in/amade-sulemane-7b4310202"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

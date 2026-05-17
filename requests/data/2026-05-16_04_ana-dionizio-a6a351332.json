@@ -1,0 +1,33 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Treinamento corporativo",
+  "localizacao": "Maringá, Paraná",
+  "tempo_publicado": "Há 1 d",
+  "solicitante": {
+    "nome": "Ana Dionizio",
+    "perfil_url": "https://www.linkedin.com/in/ana-dionizio-a6a351332",
+    "grau_conexao": "3º",
+    "subtitulo": "Gestão de Turismo│Comissária│Assistente Administrativa",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Descreva seu projeto e do que você precisa",
+      "resposta": "Olá, boa tarde, Antonio. Me chamo Ana represento a Agência Millennium Viagens, é com enorme prazer que entro em contato para solicitar um orçamento pro dia 22/06/2026 às 18h, com duração de 1h a 2h. Para uma palestra em Sorocaba com o tema \"inovações no agro\". Em torno de 32 pessoas, clientes da concessionária Case ih Agritex. Como está sua disponibilidade para essa época? Aguardo seu retorno ansiosamente, desde já obrigada!"
+    },
+    {
+      "pergunta": "Quando gostaria de ter este projeto pronto?",
+      "resposta": "Within the next two weeks"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Ana",
+      "valor": "linkedin.com/in/ana-dionizio-a6a351332",
+      "url": "https://www.linkedin.com/in/ana-dionizio-a6a351332"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

@@ -1,0 +1,45 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Consultoria de negócios",
+  "localizacao": "Luanda, Luanda",
+  "tempo_publicado": "Há 2 d",
+  "solicitante": {
+    "nome": "Osvaldo Pululo",
+    "perfil_url": "https://www.linkedin.com/in/osvaldo-pululo-3815953b3",
+    "grau_conexao": "3º",
+    "subtitulo": "Administradores da empresa Deo Zumbi",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Que tipo de consultoria de negócios?",
+      "resposta": "Plano de negócios, Pesquisa de mercado/Análise competitiva"
+    },
+    {
+      "pergunta": "Qual área mais se alinha aos seus negócios?",
+      "resposta": "TI/Tecnologia, Serviços financeiros"
+    },
+    {
+      "pergunta": "Se isso é para uma empresa, qual o tamanho dela?",
+      "resposta": "10 a 50 funcionários"
+    },
+    {
+      "pergunta": "Qual é o escopo deste projeto?",
+      "resposta": "Necessidade pontual"
+    },
+    {
+      "pergunta": "Quando você precisa desses serviços?",
+      "resposta": "Nas próximas duas semanas"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Osvaldo",
+      "valor": "linkedin.com/in/osvaldo-pululo-3815953b3",
+      "url": "https://www.linkedin.com/in/osvaldo-pululo-3815953b3"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

@@ -1,0 +1,42 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Coaching de desenvolvimento de carreira",
+  "localizacao": "São Paulo, São Paulo",
+  "tempo_publicado": "Há 1 d",
+  "solicitante": {
+    "nome": "Stefany Santos",
+    "perfil_url": "https://www.linkedin.com/in/santosstefany",
+    "grau_conexao": "2º",
+    "subtitulo": "Analista de Produtos | UX Design | Product Designer | Customer Experience | Experiência do Usuário | Product Analytics",
+    "conexoes_compartilhadas": "4 conexões compartilhadas"
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach de carreira pode ajudar você?",
+      "resposta": "Encontrar emprego, Outra opção"
+    },
+    {
+      "pergunta": "Em qual fase de carreira você se encontra?",
+      "resposta": "Meio de carreira"
+    },
+    {
+      "pergunta": "Quais são seus objetivos em trabalhar com um coach de carreira? Tem mais alguma coisa que gostaria que essa pessoa soubesse?",
+      "resposta": "meu objetivo é voltar ao mercado de trabalho, fui desligada do meu último emprego em um layoff e estou ha 8 meses buscando me recolocar mas sem sucesso"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Stefany",
+      "valor": "linkedin.com/in/santosstefany",
+      "url": "https://www.linkedin.com/in/santosstefany"
+    },
+    {
+      "tipo": "site",
+      "valor": "artstation.com/ilustradateh",
+      "url": "https://www.artstation.com/ilustradateh"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

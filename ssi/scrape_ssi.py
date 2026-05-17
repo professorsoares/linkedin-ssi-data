@@ -4,11 +4,11 @@ LinkedIn SSI Scraper
 Coleta automaticamente os dados do SSI usando a sua sessão do LinkedIn.
 
 Primeira execução:
-  python scrape_ssi.py          → abre browser para login, salva sessão
+  python ssi/scrape_ssi.py          → abre browser para login, salva sessão
 Execuções seguintes:
-  python scrape_ssi.py          → usa sessão salva, coleta e gera CSV
-  python scrape_ssi.py --login  → força novo login (sessão expirada)
-  python scrape_ssi.py --debug  → salva raw JSON e screenshot para inspeção
+  python ssi/scrape_ssi.py          → usa sessão salva, coleta e gera CSV
+  python ssi/scrape_ssi.py --login  → força novo login (sessão expirada)
+  python ssi/scrape_ssi.py --debug  → salva raw JSON e screenshot para inspeção
 
 Pré-requisitos:
   pip install playwright
@@ -32,10 +32,11 @@ except ImportError as exc:
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 
-ROOT         = Path(__file__).parent
-DATA_DIR     = ROOT / "data"
-SESSION_FILE = ROOT / ".linkedin_session.json"
-DEBUG_DIR    = ROOT / ".debug"
+ROOT         = Path(__file__).parent          # ssi/
+REPO         = ROOT.parent                    # repo root
+DATA_DIR     = ROOT / "data"                  # ssi/data/
+SESSION_FILE = REPO / ".linkedin_session.json"
+DEBUG_DIR    = REPO / ".debug"
 SSI_URL      = "https://www.linkedin.com/sales/ssi"
 
 CSV_HEADER = [
@@ -65,7 +66,6 @@ def ensure_session(playwright, force_login: bool = False):
         print("  ! Sessão expirada, solicitando novo login...")
         context.close()
 
-    # Open login and wait for user
     context = browser.new_context()
     page = context.new_page()
     page.goto("https://www.linkedin.com/login")
@@ -80,7 +80,6 @@ def ensure_session(playwright, force_login: bool = False):
 
 # ── Network Interception ──────────────────────────────────────────────────────
 
-# Known LinkedIn SSI API patterns (may need extension based on observed traffic)
 _API_PATTERNS = [
     "socialSellingIndex",
     "sales-api/salesApiSocialSelling",
@@ -98,10 +97,6 @@ def _looks_like_ssi(url: str, body: dict) -> bool:
 
 
 def intercept_ssi_api(page) -> list[tuple[str, dict]]:
-    """
-    Navigate to the SSI page and return all captured API responses that look like SSI data.
-    Useful for --debug mode; extraction itself uses DOM selectors.
-    """
     captured: list[tuple[str, dict]] = []
 
     def on_response(response):
@@ -140,29 +135,22 @@ def extract_from_dom(page) -> dict | None:
             return isNaN(v) ? null : v;
         };
 
-        // SSI total — the span inside the donut caption (not the sub-score spans)
         const caption = document.querySelector(
             '.user-ssi-score__donut-chart-caption .ssi-score__value'
         );
         const ssi = num(caption);
 
-        // Component scores — <progress> elements have the precise float in their value attr
         const comp = (id) => num(document.getElementById(id), 'value');
 
-        // Rankings — two .ssi-rank blocks, each has a .t-40 span with the integer
         const rankEls = document.querySelectorAll('.ssi-rank__category-score .t-40');
         const rankSector = rankEls[0] ? parseInt(rankEls[0].textContent.trim(), 10) : null;
         const rankNet    = rankEls[1] ? parseInt(rankEls[1].textContent.trim(), 10) : null;
 
-        // Averages — extracted from natural-language paragraphs: "SSI médio de 35"
         const allText = document.body.innerText;
         const avgMatches = [...allText.matchAll(/SSI médio de (\\d+)/g)];
         const avgSector = avgMatches[0] ? parseInt(avgMatches[0][1], 10) : null;
         const avgNet    = avgMatches[1] ? parseInt(avgMatches[1][1], 10) : null;
 
-        // Per-component sector/network values — from Highcharts group charts
-        // Charts inside .group-ssi-score__donut-chart: [0]=sector, [1]=network
-        // Each pie has 5 slices: marca, pessoas, insights, relacao, remaining
         const hcAll = (window.Highcharts && window.Highcharts.charts || []).filter(Boolean);
         const groupCharts = hcAll.filter(
             c => c.container && c.container.closest('.group-ssi-score__donut-chart')
@@ -204,12 +192,10 @@ _COMP_LABELS = {
 
 
 def _br(v: float) -> str:
-    """Format float as Brazilian decimal string: comma separator, no trailing zeros."""
     return f"{round(v, 3):g}".replace(".", ",")
 
 
 def build_rows(metrics: dict, ref_date: str, ref_time: str) -> list[list]:
-    """Convert the extracted metrics dict into CSV rows matching the existing format."""
     rows = []
 
     def row(secao, campo, valor_original, unidade, valor_num, escala="", obs=""):
@@ -257,7 +243,6 @@ def build_rows(metrics: dict, ref_date: str, ref_time: str) -> list[list]:
 
 
 def save_csv(metrics: dict, force: bool = False) -> Path:
-    """Write metrics to a dated CSV in data/. Skips if file exists (--force to overwrite)."""
     DATA_DIR.mkdir(exist_ok=True)
     today    = date.today().isoformat()
     now_time = datetime.now().strftime("%H:%M")
@@ -279,7 +264,6 @@ def save_csv(metrics: dict, force: bool = False) -> Path:
 # ── Debug Helpers ──────────────────────────────────────────────────────────────
 
 def save_debug(page, all_captured: list) -> None:
-    """Dump screenshot, captured API JSON, and page HTML to .debug/ for inspection."""
     DEBUG_DIR.mkdir(exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -302,7 +286,6 @@ def save_debug(page, all_captured: list) -> None:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
-    """Entry point: parse CLI flags, run scrape, save CSV."""
     force_login = "--login" in sys.argv
     debug_mode  = "--debug" in sys.argv
     force_csv   = "--force" in sys.argv
@@ -322,7 +305,7 @@ def main():
         metrics = extract_from_dom(page)
 
         page.close()
-        context.storage_state(path=str(SESSION_FILE))  # refresh session TTL
+        context.storage_state(path=str(SESSION_FILE))
         browser.close()
 
     if not metrics:

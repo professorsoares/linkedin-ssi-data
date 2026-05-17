@@ -1,0 +1,42 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "13:15",
+  "titulo_projeto": "Coaching de desenvolvimento de carreira",
+  "localizacao": "Duque de Caxias, Rio de Janeiro",
+  "tempo_publicado": "Há 1 d",
+  "solicitante": {
+    "nome": "Patrick Candido",
+    "perfil_url": "https://www.linkedin.com/in/patrick-candido-da-silva",
+    "grau_conexao": "3º",
+    "subtitulo": "Supply Chain | Logística Offshore | Suprimentos | Ambiente Marítimo | Desenvolvimento Técnico Industrial",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach de carreira pode ajudar você?",
+      "resposta": "Encontrar emprego, Explorar oportunidades de carreira futuras, Outra opção"
+    },
+    {
+      "pergunta": "Em qual fase de carreira você se encontra?",
+      "resposta": "Meio de carreira"
+    },
+    {
+      "pergunta": "Quais são seus objetivos em trabalhar com um coach de carreira? Tem mais alguma coisa que gostaria que essa pessoa soubesse?",
+      "resposta": "Meu objetivo é estar melhor posicionado no mercado para alcançar bons cargos e boas empresas principalmente do ramo naval"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Patrick",
+      "valor": "linkedin.com/in/patrick-candido-da-silva",
+      "url": "https://www.linkedin.com/in/patrick-candido-da-silva"
+    },
+    {
+      "tipo": "Data de nascimento",
+      "valor": "10 de dezembro",
+      "url": null
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+}

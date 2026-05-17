@@ -41,7 +41,7 @@ def commit_today() -> bool:
     message   = f"Adicionando os dados do dia {today_fmt} ."
 
     # Stage only the files this pipeline produces
-    git("add", "data/", "dashboard.html")
+    git("add", "ssi/data/", "dashboard.html")
 
     status = git("status", "--porcelain")
     if not status.stdout.strip():
@@ -64,7 +64,7 @@ def main():
     args = sys.argv[1:]
 
     # ── 1. Scrape ──────────────────────────────────────────────────────────────
-    scrape_cmd = [PYTHON, str(ROOT / "scrape_ssi.py")]
+    scrape_cmd = [PYTHON, str(ROOT / "ssi" / "scrape_ssi.py")]
     for flag in ("--login", "--force", "--debug"):
         if flag in args:
             scrape_cmd.append(flag)
