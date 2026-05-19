@@ -34,5 +34,6 @@
     }
   ],
   "resposta": null,
-  "fonte": "LinkedIn Service Marketplace / scrape_requests.py"
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py",
+  "texto_convite": "Olá, Kanae!\nVi seu pedido de Coaching de desenvolvimento de carreira e te encaminhei uma mensagem. Será um prazer fazer parte de sua rede profissional para evoluirmos juntas."
 }

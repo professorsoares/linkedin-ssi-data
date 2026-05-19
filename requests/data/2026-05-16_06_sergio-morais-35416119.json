@@ -1,0 +1,43 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "22:11",
+  "titulo_projeto": "Coaching de desenvolvimento de carreira",
+  "localizacao": "Maceió, Alagoas",
+  "tempo_publicado": "Há 10 h",
+  "solicitante": {
+    "nome": "Sérgio Morais",
+    "perfil_url": "https://www.linkedin.com/in/s%C3%A9rgio-morais-35416119",
+    "grau_conexao": "2º",
+    "subtitulo": "Gestor de Operações de TI | Alta Disponibilidade, Cloud e Segurança | ​>95% Eficiência Operacional | Transformação Digital em Saúde",
+    "conexoes_compartilhadas": "3 conexões compartilhadas"
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach de carreira pode ajudar você?",
+      "resposta": "Encontrar emprego, Explorar oportunidades de carreira futuras"
+    },
+    {
+      "pergunta": "Em qual fase de carreira você se encontra?",
+      "resposta": "Meio de carreira"
+    },
+    {
+      "pergunta": "Quais são seus objetivos em trabalhar com um coach de carreira? Tem mais alguma coisa que gostaria que essa pessoa soubesse?",
+      "resposta": "Preciso me posicionar no mercado com novas oportunidades de carreira dentro da minha área"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Sérgio",
+      "valor": "linkedin.com/in/sérgio-morais-35416119",
+      "url": "https://www.linkedin.com/in/s%C3%A9rgio-morais-35416119"
+    },
+    {
+      "tipo": "Data de nascimento",
+      "valor": "28 de outubro",
+      "url": null
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py",
+  "texto_convite": "Olá, Sérgio!\nVi seu pedido de Coaching de desenvolvimento de carreira e te encaminhei uma mensagem. Será um prazer fazer parte de sua rede profissional para evoluirmos juntas."
+}

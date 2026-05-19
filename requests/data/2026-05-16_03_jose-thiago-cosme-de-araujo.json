@@ -1,0 +1,38 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "22:11",
+  "titulo_projeto": "Coaching executivo",
+  "localizacao": "Cidade do México e Região",
+  "tempo_publicado": "Há 10 h",
+  "solicitante": {
+    "nome": "Jose Thiago Cosme de Araujo",
+    "perfil_url": "https://www.linkedin.com/in/jose-thiago-cosme-de-araujo",
+    "grau_conexao": "2º",
+    "subtitulo": "Diretor de Entrega de Serviços Compartilhados | GBS | Finanças | Automação e Otimização de Processos | Gestão Global",
+    "conexoes_compartilhadas": "1 conexão compartilhada"
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach pode ajudar você?",
+      "resposta": "Desenvolver estratégia para aumentar sua presença de liderança, Criar um plano de 60 dias ou fazer uma avaliação de 360 graus, Acelerar a dinâmica no seu cargo atual"
+    },
+    {
+      "pergunta": "Para quem é este coach?",
+      "resposta": "Eu"
+    },
+    {
+      "pergunta": "Qual o seu cargo atual e com o que você mais precisa de ajuda? Tem mais alguma coisa que gostaria que essa pessoa soubesse?",
+      "resposta": "Soy Director de Finanzas y ocupo mejorar mi presencia como líder y hacer presentaciones con impacto."
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Jose Thiago",
+      "valor": "linkedin.com/in/jose-thiago-cosme-de-araujo",
+      "url": "https://www.linkedin.com/in/jose-thiago-cosme-de-araujo"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py",
+  "texto_convite": "Olá, Jose!\nVi seu pedido de Coaching executivo e te encaminhei uma mensagem. Será um prazer fazer parte de sua rede profissional para evoluirmos juntas."
+}

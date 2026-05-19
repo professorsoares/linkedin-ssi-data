@@ -1,0 +1,43 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "22:11",
+  "titulo_projeto": "Coaching executivo",
+  "localizacao": "Salvador, Bahia",
+  "tempo_publicado": "Há 11 h",
+  "solicitante": {
+    "nome": "Bianca Nogueira",
+    "perfil_url": "https://www.linkedin.com/in/biancaanogueira",
+    "grau_conexao": "2º",
+    "subtitulo": "Advogada | Governance, Risks, Compliance (GRC) | Anticorrupção | Prevenção à fraude | AML / PLD | Controles Internos | Direito Penal Econômico",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach pode ajudar você?",
+      "resposta": "Criar um plano de 60 dias ou fazer uma avaliação de 360 graus, Esclarecer objetivos e detalhar como alcançá-los"
+    },
+    {
+      "pergunta": "Para quem é este coach?",
+      "resposta": "Eu"
+    },
+    {
+      "pergunta": "Qual o seu cargo atual e com o que você mais precisa de ajuda? Tem mais alguma coisa que gostaria que essa pessoa soubesse?",
+      "resposta": "Sou advogada, com 8 anos de experiência em Direito Penal (especialmente, em crimes do colarinho branco). Saí do escritório de onde trabalhava e passei a atuar como analista de governança, risco e compliance na área da saúde. Busco fazer uma transição de carreira, para atuar na prevenção e combate ao crime, numa agência internacional, como o UNODC. Queria orientações sobre melhorias que devo acrescentar ao currículo, networking e curadoria de vagas com o meu perfil."
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Bianca",
+      "valor": "linkedin.com/in/biancaanogueira",
+      "url": "https://www.linkedin.com/in/biancaanogueira"
+    },
+    {
+      "tipo": "E-mail",
+      "valor": "biancanogueira.001@gmail.com",
+      "url": "mailto:biancanogueira.001@gmail.com"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py",
+  "texto_convite": "Olá, Bianca!\nVi seu pedido de Coaching executivo e te encaminhei uma mensagem. Será um prazer fazer parte de sua rede profissional para evoluirmos juntas."
+}

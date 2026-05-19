@@ -31,6 +31,7 @@ Na primeira execução, um browser abrirá para você fazer login no LinkedIn. A
 
 ```bash
 python ssi/scrape_ssi.py
+
 ```
 
 Em seguida, gere o dashboard:
@@ -43,6 +44,7 @@ Ou execute o pipeline completo (coleta → dashboard → commit git):
 
 ```bash
 python run_daily.py
+
 ```
 
 | Flag | Descrição |

@@ -1,0 +1,34 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "22:11",
+  "titulo_projeto": "Coaching executivo",
+  "localizacao": "São Paulo, São Paulo",
+  "tempo_publicado": "Há 9 h",
+  "solicitante": {
+    "nome": "Rodrigo Ferruzzi",
+    "perfil_url": "https://www.linkedin.com/in/rodrigo-ferruzzi-248712207",
+    "grau_conexao": "3º",
+    "subtitulo": "Executivo | Gestão Administrativa, Financeira e de Suprimentos | Real Estate & Operações | +30 anos | Gestão de Ativos até R$250M | Eficiência, Governança e Performance",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Como seu coach pode ajudar você?",
+      "resposta": "Criar um plano de 60 dias ou fazer uma avaliação de 360 graus, Outra opção"
+    },
+    {
+      "pergunta": "Para quem é este coach?",
+      "resposta": "Eu"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Rodrigo",
+      "valor": "linkedin.com/in/rodrigo-ferruzzi-248712207",
+      "url": "https://www.linkedin.com/in/rodrigo-ferruzzi-248712207"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py",
+  "texto_convite": "Olá, Rodrigo!\nVi seu pedido de Coaching executivo e te encaminhei uma mensagem. Será um prazer fazer parte de sua rede profissional para evoluirmos juntas."
+}

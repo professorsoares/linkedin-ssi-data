@@ -1,0 +1,34 @@
+{
+  "data_referencia": "2026-05-16",
+  "hora_referencia": "22:11",
+  "titulo_projeto": "Treinamento",
+  "localizacao": "Belo Horizonte, Minas Gerais",
+  "tempo_publicado": "Há 5 h",
+  "solicitante": {
+    "nome": "Wendel Oliveira",
+    "perfil_url": "https://www.linkedin.com/in/del-oliveira",
+    "grau_conexao": "3º",
+    "subtitulo": "Analista de Manutenção| Planejamento e Controle de Manutenção | Confiabilidade Operacional | Gestão de Ativos e Indicadores de Desempenho | RCM | Green Belt",
+    "conexoes_compartilhadas": null
+  },
+  "detalhes_projeto": [
+    {
+      "pergunta": "Descreva seu projeto e do que você precisa",
+      "resposta": "boa tarde Débora tenho interesse no seu serviço de aprendizagem referente a ao idioma do inglês como que funciona poderia andar mais detalhes aguardo para podermos conversarmos a respeito abraço"
+    },
+    {
+      "pergunta": "Quando gostaria de ter este projeto pronto?",
+      "resposta": "Esta semana"
+    }
+  ],
+  "contato": [
+    {
+      "tipo": "Perfil de Wendel",
+      "valor": "linkedin.com/in/del-oliveira",
+      "url": "https://www.linkedin.com/in/del-oliveira"
+    }
+  ],
+  "resposta": null,
+  "fonte": "LinkedIn Service Marketplace / scrape_requests.py",
+  "texto_convite": "Olá, Wendel!\nVi seu pedido de Treinamento e te encaminhei uma mensagem. Será um prazer fazer parte de sua rede profissional para evoluirmos juntas."
+}

@@ -21,8 +21,10 @@ Pré-requisitos:
 import json
 import re
 import sys
+import unicodedata
 from datetime import date, datetime
 from pathlib import Path
+from urllib.parse import unquote
 
 try:
     from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
@@ -125,8 +127,42 @@ def extract_detail(page) -> dict:
     """)
 
 
+_ITEM_SEL = (
+    ".scaffold-finite-scroll__content "
+    "li[data-test-service-marketplace-premium-service-requests__list-item]"
+)
+
+
+def _scroll_to_load_all(page) -> int:
+    """
+    Scroll the list container until no new items appear.
+    Returns the total item count after all pages are loaded.
+    """
+    prev_count = 0
+    stale_rounds = 0
+
+    while stale_rounds < 3:
+        # Scroll the list panel (left column) to its bottom
+        page.evaluate("""
+            const el = document.querySelector('.scaffold-finite-scroll__content');
+            if (el) el.scrollTop = el.scrollHeight;
+            else window.scrollTo(0, document.body.scrollHeight);
+        """)
+        page.wait_for_timeout(2_000)
+
+        count = len(page.query_selector_all(_ITEM_SEL))
+        if count > prev_count:
+            print(f"  > Scroll: {count} item(s) carregado(s)...")
+            prev_count  = count
+            stale_rounds = 0
+        else:
+            stale_rounds += 1
+
+    return prev_count
+
+
 def scrape_all_requests(page) -> list[dict]:
-    """Navigate to the requests page, click each item, and collect details."""
+    """Navigate to the requests page, scroll to load all items, then extract each."""
     print(f"\n  > Abrindo {REQUESTS_URL} ...")
     try:
         page.goto(REQUESTS_URL, wait_until="networkidle", timeout=60_000)
@@ -141,23 +177,28 @@ def scrape_all_requests(page) -> list[dict]:
         print("  ! Lista de solicitações não encontrada. Verifique se a URL está correta.")
         return []
 
-    items = page.query_selector_all(
-        ".scaffold-finite-scroll__content li[data-test-service-marketplace-premium-service-requests__list-item]"
-    )
-    total = len(items)
-    print(f"  > {total} solicitação(ões) encontrada(s)")
+    print("  > Scrollando para carregar todos os itens...")
+    total = _scroll_to_load_all(page)
+    print(f"  > {total} solicitação(ões) encontrada(s) no total")
 
     if total == 0:
         return []
 
+    # Scroll back to top so clicks start from item 0
+    page.evaluate("""
+        const el = document.querySelector('.scaffold-finite-scroll__content');
+        if (el) el.scrollTop = 0;
+    """)
+    page.wait_for_timeout(500)
+
     results = []
     for idx in range(total):
-        items = page.query_selector_all(
-            ".scaffold-finite-scroll__content li[data-test-service-marketplace-premium-service-requests__list-item]"
-        )
+        items = page.query_selector_all(_ITEM_SEL)
         if idx >= len(items):
             break
 
+        # Scroll item into view before clicking
+        items[idx].scroll_into_view_if_needed()
         items[idx].click()
         print(f"  > [{idx + 1}/{total}] Solicitação ...", end=" ")
 
@@ -258,19 +299,16 @@ def _save_debug_contact(page, profile_url: str) -> None:
 
 def _slug(text: str) -> str:
     text = text.lower().strip()
-    text = re.sub(r"[àáâãä]", "a", text)
-    text = re.sub(r"[èéêë]", "e", text)
-    text = re.sub(r"[ìíîï]", "i", text)
-    text = re.sub(r"[òóôõö]", "o", text)
-    text = re.sub(r"[ùúûü]", "u", text)
-    text = text.replace("ç", "c")
+    # Decompose accented chars (NFD) then drop all combining marks — handles ç, ã, ê, etc.
+    text = unicodedata.normalize("NFD", text)
+    text = "".join(c for c in text if unicodedata.category(c) != "Mn")
     text = re.sub(r"[^a-z0-9]+", "-", text)
     return text.strip("-")[:40]
 
 
 def _profile_id(url: str) -> str:
     m = re.search(r"/in/([^/?#]+)", url or "")
-    return m.group(1) if m else ""
+    return _slug(unquote(m.group(1))) if m else ""
 
 
 def _val(v) -> str | None:
@@ -278,15 +316,33 @@ def _val(v) -> str | None:
     return v.strip() if isinstance(v, str) and v.strip() else None
 
 
+def _first_name(nome: str | None) -> str:
+    if not nome:
+        return ""
+    return nome.strip().split()[0]
+
+
+def build_invite_text(nome: str | None, titulo_projeto: str | None) -> str:
+    primeiro = _first_name(nome)
+    titulo   = titulo_projeto or "seu projeto"
+    return (
+        f"Olá, {primeiro}!\n"
+        f"Vi seu pedido de {titulo} e te encaminhei uma mensagem. "
+        f"Será um prazer fazer parte de sua rede profissional para evoluirmos juntas."
+    )
+
+
 def build_json(raw: dict, contacts: list[dict] | None, ref_date: str, ref_time: str) -> dict:
+    nome    = _val(raw.get("creatorName"))
+    titulo  = _val(raw.get("title"))
     return {
         "data_referencia": ref_date,
         "hora_referencia": ref_time,
-        "titulo_projeto": _val(raw.get("title")),
+        "titulo_projeto": titulo,
         "localizacao": _val(raw.get("location")),
         "tempo_publicado": _val(raw.get("posted")),
         "solicitante": {
-            "nome": _val(raw.get("creatorName")),
+            "nome": nome,
             "perfil_url": raw.get("profileUrl"),
             "grau_conexao": raw.get("degree"),
             "subtitulo": _val(raw.get("subtitle")),
@@ -294,23 +350,38 @@ def build_json(raw: dict, contacts: list[dict] | None, ref_date: str, ref_time: 
         },
         "detalhes_projeto": raw.get("detalhes_projeto", []),
         "contato": contacts,
+        "texto_convite": build_invite_text(nome, titulo),
         "resposta": None,
         "fonte": SOURCE,
     }
 
 
+def already_captured(force: bool) -> set[str]:
+    """Return the set of perfil_urls already saved across all JSONs in data/."""
+    if force:
+        return set()
+    urls: set[str] = set()
+    if not DATA_DIR.exists():
+        return urls
+    for f in DATA_DIR.glob("*.json"):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            url  = data.get("solicitante", {}).get("perfil_url")
+            if url:
+                urls.add(url.rstrip("/"))
+        except (json.JSONDecodeError, OSError):
+            pass
+    return urls
+
+
 def save_request(raw: dict, contacts: list[dict] | None, idx: int,
-                 ref_date: str, ref_time: str, force: bool) -> Path | None:
+                 ref_date: str, ref_time: str) -> Path | None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     profile_id = _profile_id(raw.get("profileUrl") or "")
     name_slug  = _slug(raw.get("creatorName") or f"item{idx}")
     identifier = profile_id or name_slug
     filename   = f"{ref_date}_{idx:02d}_{identifier}.json"
     output     = DATA_DIR / filename
-
-    if output.exists() and not force:
-        print(f"  ! Já existe: {filename} (use --force para sobrescrever)")
-        return None
 
     payload = build_json(raw, contacts, ref_date, ref_time)
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -325,6 +396,40 @@ def save_debug_requests(page) -> None:
     page.screenshot(path=str(DEBUG_DIR / f"requests_{ts}.png"), full_page=True)
     (DEBUG_DIR / f"requests_html_{ts}.htm").write_text(page.content(), encoding="utf-8")
     print(f"  > Debug salvo em {DEBUG_DIR}")
+
+def _filter_new(all_requests: list[dict], force: bool) -> list[dict]:
+    """Return only requests whose perfil_url hasn't been saved before."""
+    captured = already_captured(force)
+    if captured and not force:
+        print(f"\n  > {len(captured)} perfil(is) já capturado(s) — serão ignorados.")
+    new = []
+    for raw in all_requests:
+        url = (raw.get("profileUrl") or "").rstrip("/")
+        if url and url in captured:
+            print(f"  ! Já existe: {raw.get('creatorName')} — pulando.")
+        else:
+            new.append(raw)
+    return new
+
+
+def _fetch_and_save(page, new_requests: list[dict],
+                    today: str, now_time: str, debug: bool) -> int:
+    """Fetch contact info for each request and persist the JSON. Returns save count."""
+    saved = 0
+    total = len(new_requests)
+    for idx, raw in enumerate(new_requests, start=1):
+        nome        = raw.get("creatorName") or f"item {idx}"
+        profile_url = raw.get("profileUrl")
+        print(f"\n  [{idx}/{total}] {nome}")
+        contacts = None
+        if profile_url:
+            contacts = scrape_contact(page, profile_url, debug=debug)
+            page.wait_for_timeout(2_000)
+        else:
+            print("     contato: perfil_url ausente, pulando.")
+        if save_request(raw, contacts, idx, today, now_time):
+            saved += 1
+    return saved
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
@@ -342,10 +447,8 @@ def main():
         browser, context = ensure_session(pw, force_login)
         page = context.new_page()
 
-        # ── 1. Collect all request details ────────────────────────────────────
         print("\n--- Etapa 1: Coletando solicitações ---")
         all_requests = scrape_all_requests(page)
-
         if debug_mode:
             save_debug_requests(page)
 
@@ -357,31 +460,15 @@ def main():
             print("  Rode com --debug para inspecionar o HTML e ajustar os seletores.")
             raise SystemExit(1)
 
-        # ── 2. Fetch contact info for each profile ─────────────────────────────
-        print(f"\n--- Etapa 2: Buscando contatos ({len(all_requests)} perfil(is)) ---")
-        saved = 0
-        for idx, raw in enumerate(all_requests, start=1):
-            nome        = raw.get("creatorName") or f"item {idx}"
-            profile_url = raw.get("profileUrl")
-
-            print(f"\n  [{idx}/{len(all_requests)}] {nome}")
-
-            contacts = None
-            if profile_url:
-                contacts = scrape_contact(page, profile_url, debug=debug_mode)
-                page.wait_for_timeout(2_000)
-            else:
-                print("     contato: perfil_url ausente, pulando.")
-
-            result = save_request(raw, contacts, idx, today, now_time, force_save)
-            if result:
-                saved += 1
+        new_requests = _filter_new(all_requests, force_save)
+        print(f"\n--- Etapa 2: Buscando contatos ({len(new_requests)} novo(s)) ---")
+        saved = _fetch_and_save(page, new_requests, today, now_time, debug_mode)
 
         page.close()
         context.storage_state(path=str(SESSION_FILE))
         browser.close()
 
-    print(f"\n  Concluído: {saved} de {len(all_requests)} JSON(s) salvo(s) em {DATA_DIR}")
+    print(f"\n  Concluído: {saved} de {len(new_requests)} novo(s) salvo(s) em {DATA_DIR}")
 
 
 if __name__ == "__main__":
